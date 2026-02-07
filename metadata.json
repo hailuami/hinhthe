@@ -1,0 +1,7 @@
+{
+  "name": "ID Photo AI Pro",
+  "description": "Ứng dụng tạo ảnh thẻ chuyên nghiệp tích hợp AI: Tự động thay đổi trang phục, làm đẹp da và xuất file chuẩn 3x4, 4x6.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
