@@ -1,0 +1,7 @@
+{
+  "name": "Tạo Ảnh Thẻ AI",
+  "description": "Ứng dụng tạo ảnh thẻ chuyên nghiệp tích hợp Gemini AI miễn phí: Tự động thay đổi trang phục, làm đẹp da và xuất file chuẩn 3x4, 4x6.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

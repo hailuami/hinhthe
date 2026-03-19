@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users/{userId}/settings
+    // Document ID: default
+    // Fields:
+    //   - geminiApiKey: string (required) - The user's personal Gemini API key.
+    //   - updatedAt: timestamp (optional) - The last time the settings were updated.
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "diep.anhtra@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidUserSettings(data) {
+      return data.keys().hasAll(['geminiApiKey']) &&
+             data.geminiApiKey is string &&
+             data.geminiApiKey.size() > 0 &&
+             data.geminiApiKey.size() < 200 &&
+             (!('updatedAt' in data) || data.updatedAt is timestamp);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      // Allow user to read/write their own profile
+      allow read, write: if isOwner(userId) || isAdmin();
+
+      match /settings/default {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) && isValidUserSettings(request.resource.data);
+      }
+    }
+
+    // Allow testing connection
+    match /test/connection {
+      allow read: if isAuthenticated();
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

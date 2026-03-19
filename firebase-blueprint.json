@@ -1,0 +1,27 @@
+{
+  "entities": {
+    "UserSettings": {
+      "title": "User Settings",
+      "description": "Stores user-specific settings like API keys.",
+      "type": "object",
+      "properties": {
+        "geminiApiKey": {
+          "type": "string",
+          "description": "The user's personal Gemini API key."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The last time the settings were updated."
+        }
+      },
+      "required": ["geminiApiKey"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/settings/default": {
+      "schema": "UserSettings",
+      "description": "Default settings for a specific user."
+    }
+  }
+}
